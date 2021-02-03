@@ -55,7 +55,7 @@ function get_collection_by_id($id){
   return get_element_by_id('collection', 'idCollection', $id);
 }
 
-function get_editeur(){
+function get_editeurs(){
   $linker = connect();
   $sql = 'SELECT idEditeur, nomEditeur from editeur';
 

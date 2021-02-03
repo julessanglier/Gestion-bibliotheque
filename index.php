@@ -23,5 +23,9 @@ elseif (isset($_GET['id'])){
     case 'liste-collections':
       include('controllers/c-liste-collections.php');
       break;
+
+    case 'liste-editeurs':
+      include('controllers/c-liste-editeurs.php');
+      break;
   }
 }
