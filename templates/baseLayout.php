@@ -32,39 +32,33 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="livres.php">
-                  <span data-feather="book"></span>
-                  Livres
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="file"></span>
-                  Empreints
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="index.php?id=liste-adherents">
                   <span data-feather="users"></span>
                   Adhérents
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="book"></span>
-                  Collections
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="book"></span>
+                <a class="nav-link" href="index.php?id=liste-auteurs">
+                  <span data-feather="coffee"></span>
                   Auteurs
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="book"></span>
+                <a class="nav-link" href="index.php?id=liste-editeurs">
+                  <span data-feather="truck"></span>
                   Editeurs
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="index.php?id=liste-emprunts">
+                  <span data-feather="file"></span>
+                  Emprunts
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="index.php?id=liste-livres">
+                  <span data-feather="book"></span>
+                  Livres
                 </a>
               </li>
             </ul>
@@ -73,7 +67,20 @@
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2">Dashboard</h1>
+            <!--<h1 class="h2">Dashboard</h1>!-->
+            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <?php for ($i = 0; $i < sizeof($breadcrumbs); $i++): ?>
+                  <?php $bcelem = $breadcrumbs[$i] ?>
+                  <?php if ($i == (sizeof($breadcrumbs) -1)): ?>
+                    <li class="breadcrumb-item active" <a href="<?php echo $bcelem['link'] ?>" aria-current="page"><?php echo $bcelem['page'] ?></li>
+                  <?php else: ?>
+                    <li class="breadcrumb-item"><a href="<?php echo $bcelem['link'] ?>"><?php echo $bcelem['page'] ?></a></li>
+                  <?php endif; ?>
+                  <!--<li class="breadcrumb-item active" aria-current="page">Library</li>!-->
+                <?php endfor; ?>
+              </ol>
+          </nav>
           </div>
           <?php echo $content; ?>
         </main>
