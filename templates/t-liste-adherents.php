@@ -2,6 +2,7 @@
     $title = "Liste des adhérents";
     ob_start();
 ?>
+<button type="button" class="btn btn-info" onclick="window.location.href = 'index.php?id=ajout-adherent'">Ajouter manuellement un adhérent</a></button>
 <div class="table-responsive">
   <table class="table table-striped table-sm">
     <thead>
@@ -16,7 +17,7 @@
     <?php foreach ($adherents as $adherent): ?>
     <tr>
       <td>
-        <a href="">
+        <a href="index.php?id=modif-adherent&idadh=<?php echo $adherent['idAdh']?>">
           <?php echo $adherent['idAdh']; ?>
         </a>
       </td>
