@@ -1,77 +1,105 @@
-CREATE DATABASE `bibliotheque` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
+CREATE DATABASE `bibliotheque2`; /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */
 
--- bibliotheque.adherent definition
+
+-- bibliotheque2.adherent definition
 
 CREATE TABLE `adherent` (
-  `idAdh` varchar(5) DEFAULT NULL,
+  `idAdh` int NOT NULL AUTO_INCREMENT,
   `nomAdh` varchar(100) DEFAULT NULL,
   `prenomAdh` varchar(100) DEFAULT NULL,
   `rueAdh` varchar(100) DEFAULT NULL,
   `villeAdh` varchar(100) DEFAULT NULL,
-  `cpAdh` int(11) DEFAULT NULL,
+  `cpAdh` int DEFAULT NULL,
   `mailAdh` varchar(100) DEFAULT NULL,
-  UNIQUE KEY `adherent_idAdh_IDX` (`idAdh`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  PRIMARY KEY (`idAdh`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
--- bibliotheque.auteur definition
+-- bibliotheque2.auteur definition
 
 CREATE TABLE `auteur` (
-  `idAuteur` varchar(5) DEFAULT NULL,
+  `idAuteur` int NOT NULL AUTO_INCREMENT,
   `nomAuteur` varchar(100) DEFAULT NULL,
   `prenomAuteur` varchar(100) DEFAULT NULL,
-  UNIQUE KEY `auteur_idAuteur_IDX` (`idAuteur`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  PRIMARY KEY (`idAuteur`)
+) ENGINE=InnoDB AUTO_INCREMENT=213 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- bibliotheque.collection definition
+-- bibliotheque2.categorie definition
 
-CREATE TABLE `collection` (
-  `idCollection` varchar(5) DEFAULT NULL,
-  `nomCollection` varchar(100) DEFAULT NULL,
-  `idEditeur` varchar(5) DEFAULT NULL,
-  UNIQUE KEY `collection_idCollection_IDX` (`idCollection`) USING BTREE,
-  KEY `collection_FK` (`idEditeur`),
-  CONSTRAINT `collection_FK` FOREIGN KEY (`idEditeur`) REFERENCES `editeur` (`idEditeur`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `categorie` (
+  `idCategorie` int NOT NULL AUTO_INCREMENT,
+  `nomCategorie` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`idCategorie`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- bibliotheque.ecrit_par definition
-
-CREATE TABLE `ecrit_par` (
-  `idLivre` varchar(5) DEFAULT NULL,
-  `idAuteur` varchar(5) DEFAULT NULL,
-  KEY `ecrit_par_FK` (`idLivre`),
-  KEY `ecrit_par_FK_1` (`idAuteur`),
-  CONSTRAINT `ecrit_par_FK` FOREIGN KEY (`idLivre`) REFERENCES `livre` (`idLivre`),
-  CONSTRAINT `ecrit_par_FK_1` FOREIGN KEY (`idAuteur`) REFERENCES `auteur` (`idAuteur`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
--- bibliotheque.editeur definition
-
-CREATE TABLE `editeur` (
-  `idEditeur` varchar(5) DEFAULT NULL,
-  `nomEditeur` varchar(100) DEFAULT NULL,
-  UNIQUE KEY `editeur_idEditeur_IDX` (`idEditeur`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- bibliotheque.emprunts definition
-
-CREATE TABLE `emprunts` (
-  `idLivre` varchar(5) DEFAULT NULL,
-  `idAdh` varchar(5) DEFAULT NULL,
-  `dateDebut` date DEFAULT NULL,
-  `dateFin` date DEFAULT NULL,
-  UNIQUE KEY `emprunts_idLivre_IDX` (`idLivre`,`idAdh`) USING BTREE,
-  KEY `emprunts_FK_1` (`idAdh`),
-  CONSTRAINT `emprunts_FK` FOREIGN KEY (`idLivre`) REFERENCES `livre` (`idLivre`),
-  CONSTRAINT `emprunts_FK_1` FOREIGN KEY (`idAdh`) REFERENCES `adherent` (`idAdh`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- bibliotheque.livre definition
+-- bibliotheque2.livre definition
 
 CREATE TABLE `livre` (
-  `idLivre` varchar(10) DEFAULT NULL,
+  `idLivre` varchar(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `titreLivre` varchar(100) DEFAULT NULL,
-  `idCollection` varchar(100) DEFAULT NULL,
-  UNIQUE KEY `livre_idLivre_IDX` (`idLivre`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  PRIMARY KEY (`idLivre`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- bibliotheque2.ecrit_par definition
+
+CREATE TABLE `ecrit_par` (
+  `idLivre` varchar(13) DEFAULT NULL,
+  `idAuteur` int DEFAULT NULL,
+  UNIQUE KEY `ecrit_par_UN` (`idLivre`,`idAuteur`),
+  KEY `ecrit_par_FK_1` (`idAuteur`),
+  CONSTRAINT `ecrit_par_FK` FOREIGN KEY (`idLivre`) REFERENCES `livre` (`idLivre`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `ecrit_par_FK_1` FOREIGN KEY (`idAuteur`) REFERENCES `auteur` (`idAuteur`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- bibliotheque2.editeur definition
+
+CREATE TABLE `editeur` (
+  `idEditeur` int NOT NULL AUTO_INCREMENT,
+  `nomEditeur` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`idEditeur`)
+) ENGINE=InnoDB AUTO_INCREMENT=119 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- bibliotheque2.emprunts definition
+
+CREATE TABLE `emprunts` (
+  `idLivre` varchar(13) DEFAULT NULL,
+  `idAdh` int DEFAULT NULL,
+  `dateDebut` date DEFAULT NULL,
+  `dateFin` date DEFAULT NULL,
+  KEY `emprunts_FK_1` (`idAdh`),
+  KEY `emprunts_FK` (`idLivre`),
+  CONSTRAINT `emprunts_FK` FOREIGN KEY (`idLivre`) REFERENCES `livre` (`idLivre`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `emprunts_FK_1` FOREIGN KEY (`idAdh`) REFERENCES `adherent` (`idAdh`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- bibliotheque2.a_pour_categorie definition
+
+CREATE TABLE `a_pour_categorie` (
+  `idLivre` varchar(13) DEFAULT NULL,
+  `idCategorie` int DEFAULT NULL,
+  UNIQUE KEY `a_pour_categorie_UN` (`idLivre`,`idCategorie`),
+  KEY `a_pour_categorie_FK_1` (`idCategorie`),
+  CONSTRAINT `a_pour_categorie_FK` FOREIGN KEY (`idLivre`) REFERENCES `livre` (`idLivre`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `a_pour_categorie_FK_1` FOREIGN KEY (`idCategorie`) REFERENCES `categorie` (`idCategorie`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- bibliotheque2.edite_par definition
+
+CREATE TABLE `edite_par` (
+  `idLivre` varchar(13) DEFAULT NULL,
+  `idEditeur` int DEFAULT NULL,
+  UNIQUE KEY `edite_par_UN` (`idLivre`,`idEditeur`),
+  KEY `edite_par_FK_1` (`idEditeur`),
+  CONSTRAINT `edite_par_FK` FOREIGN KEY (`idLivre`) REFERENCES `livre` (`idLivre`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `edite_par_FK_1` FOREIGN KEY (`idEditeur`) REFERENCES `editeur` (`idEditeur`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- bibliotheque2.`user` definition
+
+CREATE TABLE `user` (
+  `userId` int NOT NULL AUTO_INCREMENT,
+  `mail` varchar(100) DEFAULT NULL,
+  `pass` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
