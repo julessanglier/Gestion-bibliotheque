@@ -32,11 +32,13 @@ Bugs connus :
 
 IMPORTANT :
   -> Laisser le dossier tel quel avec le nom 'gestion_bibliotheque' (utilisé pour des redirections).
+
   -> Installation de la BD :
     - lancer le script : db_schema.sql (création de la bdd : 'bibliotheque2')
     - lancer les autres scripts pour insérer quelques données de base
 
   -> Vous pouvez trouver le MLD utilisé dans le dossier /sql : mcd.png.
+  
   -> Pour se connecter à l'interface utilisez les identifiants suivants :
       Mail : admin@bib-orleans.com
       Mdp : admin
