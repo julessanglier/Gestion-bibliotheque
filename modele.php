@@ -1,73 +1,30 @@
 <?php
 require_once "connect.php";
 
-
-function get_element_by_id($table, $id_column, $id){
-  /*$linker = connect();
-  $sql = 'SELECT * from ? where ?=?';
-  $stmt = $linker->prepare($sql);
-  //$stmt->bindParam(':table', $table, PDO::PARAM_STR);
-  //$stmt->bindParam(':column', $id_column, PDO::PARAM_STR);
-  //$stmt->bindParam(':id', $id, PDO::PARAM_STR);
-  //$stmt->execute();
-  //var_dump($stmt);
-  //var_dump($stmt->fetch());
-  $stmt->execute([$table, $id_column, $id]);
-  var_dump($table);
-  var_dump($stmt->fetch());
-  return $stmt->fetch();*/
-
-  $linker = connect();
-  $sql = 'SELECT * FROM '. $table .' where ' . $id_column . ' = ' . '\''.$id.'\''; //optimisable ...
-
-  if (!$linker->query($sql))
-    echo "Pb d'accès à la table livres";
-  else{
-    $data = null;
-    foreach($linker->query($sql) as $row){
-      $data = $row;
-    }
-    return $data;
-  }
-
-  return null;
-}
-
-function prepared_stmt_retrieve_array($stmt, $table){
-  if (!$stmt)
-    echo "Pb d'accès à la table " . $table;
-  else{
-    $t = Array();
-    foreach($stmt as $r){
-      $t[] = $r;
-    }
-    return $t;
-  }
-
-  return null;
-}
-
 function get_livre_by_id($id){
   $linker = connect();
-  $sql = 'SELECT idLivre, titreLivre, nomEditeur, idCategorie, nomCategorie FROM livre natural join edite_par natural join editeur natural join a_pour_categorie natural join categorie where idLivre = :id';
+  $sql = 'SELECT idLivre, titreLivre, nomEditeur, idCategorie, nomCategorie, idEditeur FROM livre natural join edite_par natural join editeur natural join a_pour_categorie natural join categorie where idLivre = :id';
   $stmt = $linker->prepare($sql);
   $stmt->bindParam(':id', $id, PDO::PARAM_STR);
   $stmt->execute();
 
   $livre = $stmt->fetchAll();
-  return $livre;
+  return $livre[0];
 }
 
 function remove_livre_by_id($id){
+  $linker = connect();
   $sql = 'DELETE FROM livre where idLivre = :id;';
   $stmt = $linker->prepare($sql);
   $stmt->bindParam(':id', $id, PDO::PARAM_STR);
   $stmt->execute();
 }
 
+
 function get_livres(){
   $linker = connect();
-  $sql = 'SELECT idLivre, titreLivre, nomEditeur, nomCategorie FROM livre natural join edite_par natural join editeur natural join a_pour_categorie natural join categorie';
+  $sql = 'SELECT idLivre, titreLivre, nomEditeur, nomCategorie, (idLivre  in (select idLivre from emprunts e where dateFin > CURRENT_DATE and e.idLivre = idLivre)) as emprunte FROM livre natural join edite_par natural join editeur natural join a_pour_categorie natural join categorie
+';
 
   if (!$linker->query($sql))
     echo "Pb d'accès à la table livre";
@@ -89,20 +46,8 @@ function get_authors_by_livre_id($id){
     $stmt = $linker->prepare($sql);
     $stmt->bindParam(':id', $id, PDO::PARAM_STR);
     $stmt->execute();
-    if (!$stmt)
-      echo "Pb d'accès à la table auteur";
-    else{
-      $auteurs = Array();
-      foreach ($stmt as $row){
-        $auteurs[] = $row;
-      }
-      /*while ($row = $result->fetch_assoc()){
-        $auteurs[] = $row;
-      }
-      */return $auteurs;
-    }
 
-    return null;
+    return $stmt->fetchAll();
 }
 
 function get_auteurs(){
@@ -127,27 +72,6 @@ function get_auteurs(){
   return null;
 }
 
-function get_collections(){
-  $linker = connect();
-  $sql = 'SELECT idCollection, nomCollection, idEditeur, nomEditeur from collection natural join editeur';
-
-  if (!$linker->query($sql))
-    echo "Pb d'accès à la table collection";
-  else{
-    $collections = Array();
-    foreach($linker->query($sql) as $row){
-      $collections[] = $row;
-    }
-    return $collections;
-  }
-
-  return null;
-}
-
-function get_collection_by_id($id){
-  return get_element_by_id('collection', 'idCollection', $id);
-}
-
 function get_editeurs(){
   $linker = connect();
   $sql = 'SELECT idEditeur, nomEditeur from editeur';
@@ -157,9 +81,6 @@ function get_editeurs(){
   return $stmt->fetchAll();
 }
 
-function get_editeur_by_id($id){
-  return get_element_by_id('editeur', 'idEditeur', $id);
-}
 
 function get_adherents(){
   $linker = connect();
@@ -174,10 +95,6 @@ function get_adherents(){
     return $adherents;
   }
   return null;
-}
-
-function get_adherent_by_id($id){
-  return get_element_by_id('adherent', 'idAdh', $id);
 }
 
 function get_emprunts(){
@@ -203,9 +120,33 @@ function get_categories(){
   return $stmt->fetchAll();
 }
 
-function get_reserved_books($id){
+function get_nb_livres(){
   $linker = connect();
-  $sql = 'SELECT idLivre from livre l where exists (select idLivre from emprunts e where dateFin > CURRENT_DATE and e.idLivre = l.idLivre)';
+  $sql = 'SELECT count(idLivre) as nbLivres from livre';
+  $stmt = $linker->prepare($sql);
+  $stmt->execute();
+  return $stmt->fetchObject();
+}
+
+function get_nb_livres_reserves(){
+  $linker = connect();
+  $sql = 'SELECT count(idLivre) as nbEmprunts from emprunts where dateFin > CURRENT_DATE';
+  $stmt = $linker->prepare($sql);
+  $stmt->execute();
+  return $stmt->fetchObject();
+}
+
+function get_nb_adherents(){
+  $linker = connect();
+  $sql = 'SELECT count(idAdh) as nbAdh from adherent';
+  $stmt = $linker->prepare($sql);
+  $stmt->execute();
+  return $stmt->fetchObject();
+}
+
+function livre($id){
+  $linker = connect();
+  $sql = 'SELECT idLivre from livre l where exists (select idLivre from emprunts ewhere dateFin > CURRENT_DATE and e.idLivre = l.idLivre)';
 
 }
 
@@ -214,16 +155,59 @@ function check_if_reserved($id){
   $sql = 'SELECT idLivre from emprunts e where dateFin > CURRENT_DATE and idLivre = :id';
 }
 
-function revoke_reservation($id){
+function revoke_reservation($idlivre, $idadh){
   $linker = connect();
-  $sql = 'DELETE from emprunts where dateFin > CURRENT_DATE and idLivre = :id1 and idAdh = :id2';
+  $sql = 'DELETE from emprunts where idLivre = :id1 and idAdh = :id2';
+  $stmt = $linker->prepare($sql);
+  $stmt->bindParam(':id1', $idlivre, PDO::PARAM_STR);
+  $stmt->bindParam(':id2', $idadh, PDO::PARAM_INT);
+  var_dump($idlivre);
+  var_dump($idadh);
+  $stmt->execute();
+  echo $stmt->errorCode();
 }
 
 function ajout_adherent($nom, $prenom, $rue, $ville, $cp, $mail){
+  $linker = connect();
 
+  $sql = 'INSERT INTO adherent (mailAdh, nomAdh, prenomAdh, rueAdh, villeAdh, cpAdh) values(:mail, :nom, :prenom, :rue, :ville, :cp)';
+  $stmt = $linker->prepare($sql);
+  $stmt->bindParam(':mail', $mail, PDO::PARAM_STR);
+  $stmt->bindParam(':nom', $nom, PDO::PARAM_STR);
+  $stmt->bindParam(':prenom', $prenom, PDO::PARAM_STR);
+  $stmt->bindParam(':rue', $rue, PDO::PARAM_STR);
+  $stmt->bindParam(':ville', $ville, PDO::PARAM_STR);
+  $stmt->bindParam(':cp', $cp, PDO::PARAM_INT);
+
+  return $stmt->execute();
 }
 
-function majLivre($id, $titre, $categorie){
+function get_adherent_by_id($id){
+  $linker = connect();
+  $sql = 'SELECT * from adherent where idAdh = :id';
+  $stmt = $linker->prepare($sql);
+  $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+  $stmt->execute();
+  return $stmt->fetchAll()[0];
+}
+
+function maj_adherent($id, $mail, $nom, $prenom, $rue, $ville, $cp){
+  $linker = connect();
+
+  $sql = 'UPDATE adherent SET mailAdh = :mail, nomAdh = :nom, prenomAdh = :prenom, rueAdh = :rue, villeAdh = :ville, cpAdh = :cp where idAdh = :id';
+  $stmt = $linker->prepare($sql);
+  $stmt->bindParam(':mail', $mail, PDO::PARAM_STR);
+  $stmt->bindParam(':nom', $nom, PDO::PARAM_STR);
+  $stmt->bindParam(':prenom', $prenom, PDO::PARAM_STR);
+  $stmt->bindParam(':rue', $rue, PDO::PARAM_STR);
+  $stmt->bindParam(':ville', $ville, PDO::PARAM_STR);
+  $stmt->bindParam(':cp', $cp, PDO::PARAM_INT);
+  $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+  return $stmt->execute();
+}
+
+function majLivre($id, $titre, $categorie, $editeur, $auteurs){
   $linker = connect();
   $sql = 'UPDATE livre set titreLivre = :titre where idLivre = :id';
   $stmt_book = $linker->prepare($sql);
@@ -236,10 +220,51 @@ function majLivre($id, $titre, $categorie){
   $stmt_category->bindParam(':categorie', $categorie, PDO::PARAM_INT);
   $stmt_category->bindParam(':id', $id, PDO::PARAM_STR);
 
-  return $stmt_book->execute() && $stmt_category->execute();
+  $update_publisher = 'UPDATE edite_par set idEditeur = :editeur where idLivre = :id';
+  $stmt_publisher = $linker->prepare($update_publisher);
+  $stmt_publisher->bindParam(':editeur', $editeur, PDO::PARAM_INT);
+  $stmt_publisher->bindParam(':id', $id, PDO::PARAM_STR);
+
+  $auteurs_avant_update_temp = get_authors_by_livre_id($id);
+  $auteurs_avant_update = Array();
+  foreach ($auteurs_avant_update_temp as $auteur){
+    array_push($auteurs_avant_update, $auteur['idAuteur']);
+  }
+
+  $stmt_auteur1 = null;
+  $stmt_auteur2 = null;
+
+  foreach ($auteurs as $auteurId){
+    if (in_array($auteurId, $auteurs) && !in_array($auteurId, $auteurs_avant_update)){ //ajout
+      $ajout_auteur = 'INSERT INTO ecrit_par (idLivre, idAuteur) values (:id1, :id2)';
+      $stmt_auteur1 = $linker->prepare($ajout_auteur);
+      $stmt_auteur1->bindParam(':id1', $id, PDO::PARAM_STR);
+      $stmt_auteur1->bindParam(':id2', $auteurId, PDO::PARAM_INT);
+    }
+    if (in_array($auteurId, $auteurs_avant_update) && !in_array($auteurId, $auteurs)){ //suppression
+      $suppression_auteur = 'DELETE from ecrit_par where idLivre = :id1 and idAuteur = :id2';
+      $stmt_auteur2 = $linker->prepare($suppression_auteur);
+      $stmt_auteur2->bindParam(':id1', $id, PDO::PARAM_STR);
+      $stmt_auteur2->bindParam(':id2', $auteurId, PDO::PARAM_INT);
+    }
+  }
+
+  if ($stmt_auteur1 != null && $stmt_auteur2 == null){
+    return $stmt_book->execute() && $stmt_category->execute() && $stmt_auteur1->execute() && $stmt_publisher->execute();
+  }
+
+  if ($stmt_auteur1 == null && $stmt_auteur2 != null){
+    return $stmt_book->execute() && $stmt_category->execute() && $stmt_auteur2->execute() && $stmt_publisher->execute();
+  }
+
+  if ($stmt_auteur1 != null && $stmt_auteur2 != null){
+    return $stmt_book->execute() && $stmt_category->execute() && $stmt_auteur1->execute() && $stmt_auteur2->execute() && $stmt_publisher->execute();
+  }
+
+  return $stmt_book->execute() && $stmt_category->execute() && $stmt_publisher->execute();
 }
 
-function ajoutLivre($titre, $categorie, $editeur){
+function ajoutLivre($titre, $categorie, $editeur, $auteurs){
   $linker = connect();
   $book = 'INSERT INTO livre (idLivre, titreLivre) values (:id, :titre)';
 
@@ -259,5 +284,33 @@ function ajoutLivre($titre, $categorie, $editeur){
   $stmt_editor->bindParam(':id1', $id, PDO::PARAM_STR);
   $stmt_editor->bindParam(':id2', $editeur, PDO::PARAM_INT);
 
-  return $stmt_book->execute() && $stmt_category->execute() && $stmt_editor->execute();
+  $stmt_auteur1 = null;
+  foreach ($auteurs as $auteurId){
+      $ajout_auteur = 'INSERT INTO ecrit_par (idLivre, idAuteur) values (:id1, :id2)';
+      $stmt_auteur1 = $linker->prepare($ajout_auteur);
+      $stmt_auteur1->bindParam(':id1', $id, PDO::PARAM_STR);
+      $stmt_auteur1->bindParam(':id2', $auteurId, PDO::PARAM_INT);
+  }
+
+  return $stmt_book->execute() && $stmt_category->execute() && $stmt_editor->execute() && $stmt_auteur1->execute();
+}
+
+function login($mail, $password){
+  $logged = false;
+  $linker = connect();
+  $sql = 'SELECT userId from user where mail = :mail and pass = :pass';
+  $stmt = $linker->prepare($sql);
+  $hashed_pass = md5($password);
+  $stmt->bindParam(':mail', $mail, PDO::PARAM_STR);
+  $stmt->bindParam(':pass', $hashed_pass, PDO::PARAM_STR);
+
+  $stmt->execute();
+  if ($stmt->rowCount() != 0){
+    $user = $stmt->fetchObject();
+    $_SESSION['userId'] = $user->userId;
+    echo 'ok';
+    return true;
+  }
+  echo 'pas ok';
+  return $logged;
 }
