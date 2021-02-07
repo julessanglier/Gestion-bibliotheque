@@ -34,6 +34,18 @@
       <label class="input-group-text" for="inputGroupSelect02">Éditeur</label>
     </div>
 
+    <div class="input-group mb-3">
+      <span class="input-group-text" id="basic-addon2">Auteur(s)</span>
+      <ul class="list-group" style="max-height: 30vh; overflow: scroll;">
+        <?php foreach($auteurs as $auteur): ?>
+          <li class="list-group-item">
+            <input class="form-check-input me-1" name="auteurs-<?php echo $auteur['idAuteur']?>" type="checkbox" aria-label="...">
+            <?php echo $auteur['nomAuteur']. ' ' . $auteur['prenomAuteur']; ?>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
+
     <div class="col-12">
       <button type="submit" class="btn btn-success">Ajouter</button>
     </div>
