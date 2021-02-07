@@ -2,17 +2,14 @@
 require_once 'modele.php';
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-if ('/index.php' == $uri){
-  //load main page
-}
-elseif (isset($_GET['id'])){
+if (isset($_GET['id'])){
   $page = $_GET['id'];
   switch ($page){
     case 'liste-emprunts':
       include('controllers/c-liste-emprunts.php');
     break;
 
-    case 'liste-livre':
+    case 'liste-livres':
       include('controllers/c-livres-liste.php');
       break;
 
@@ -27,5 +24,20 @@ elseif (isset($_GET['id'])){
     case 'liste-editeurs':
       include('controllers/c-liste-editeurs.php');
       break;
+
+    case 'modif-livre':
+      include('controllers/c-modif-livre.php');
+      break;
+
+    case 'ajout-livre':
+      include('controllers/c-ajout-livre.php');
+      break;
+
+    default:
+      include('controllers/c-404.php');
+      break;
   }
+}
+else{
+  include('controllers/c-graphe-emprunts.php');
 }
