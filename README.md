@@ -44,6 +44,7 @@ IMPORTANT :
 
 Description des fichiers :
 
+```bash
   ├── connect.php : utilitaire PDO, connexion, ...
   ├── controllers : contrôleurs respectifs
   │   ├── c-404.php
@@ -96,3 +97,4 @@ Description des fichiers :
       ├── t-login.php
       ├── t-modif-adh.php
       └── t-modif-livre.php
+```
