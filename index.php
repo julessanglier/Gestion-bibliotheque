@@ -2,7 +2,9 @@
 require_once 'modele.php';
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-if (isset($_GET['id'])){
+session_start();
+
+if (isset($_GET['id']) && isset($_SESSION['userId'])){
   $page = $_GET['id'];
   switch ($page){
     case 'liste-emprunts':
@@ -33,11 +35,40 @@ if (isset($_GET['id'])){
       include('controllers/c-ajout-livre.php');
       break;
 
+    case 'login':
+      include('controllers/c-login.php');
+    break;
+
+    case 'deconnexion':
+      include('controllers/c-deconnexion.php');
+      break;
+
+    case 'revoquer-emprunt':
+      include('controllers/c-revoquer-emprunt.php');
+      break;
+
+    case 'modif-adherent':
+      include('controllers/c-modif-adherent.php');
+      break;
+
+    case 'ajout-adherent':
+      include('controllers/c-ajout-adherent.php');
+      break;
+
+    case 'liste-auteurs':
+    include('controllers/c-liste-auteurs.php');
+      break;
+
     default:
       include('controllers/c-404.php');
       break;
   }
 }
 else{
-  include('controllers/c-graphe-emprunts.php');
+  if (!isset($_SESSION['userId'])){
+      include('controllers/c-login.php');
+  }
+  else{
+    include('controllers/c-graphe-emprunts.php');
+  }
 }
