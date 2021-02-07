@@ -11,15 +11,15 @@
         <th>Titre Livre</th>
         <th>Date début</th>
         <th>Date fin</th>
+        <th>Révoquer emprunt ?</th>
+        <th>Envoyer rappel ?</th>
       </tr>
     </thead>
     <tbody>
     <?php foreach ($livres as $livre): ?>
     <tr>
       <td>
-        <a href="modif_livre.php?id=">
-          <?php echo $livre['idLivre']; ?>
-        </a>
+        <?php echo $livre['idLivre']; ?>
       </td>
       <td>
         <a href="">
@@ -34,6 +34,12 @@
       </td>
       <td>
         <?php echo $livre['dateFin']; ?>
+      </td>
+      <td>
+        <button type="button" class="btn btn-danger" onclick="window.location.href = 'index.php?id=revoquer-emprunt&idlivre=<?php echo $livre['idLivre']?>&idadh=<?php echo $livre['idAdh']?>'">Révoquer</button>
+      </td>
+      <td>
+        <button type="button" class="btn btn-warning" onclick="alert('Envoie d'un mail en cours ...');">Envoyer</button>
       </td>
     </tr>
     <?php endforeach; ?>
