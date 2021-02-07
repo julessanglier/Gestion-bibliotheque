@@ -14,9 +14,9 @@
       <form action="controllers/c-login.php" method="POST">
         <h1 class="h3 mb-3 fw-normal">Veuillez vous connecter</h1>
         <label for="inputEmail" class="visually-hidden">Adresse mail</label>
-        <input type="email" id="inputEmail" name="mail" class="form-control" placeholder="Email address" required autofocus>
+        <input type="email" id="inputEmail" name="mail" class="form-control" placeholder="Mail" required autofocus>
         <label for="inputPassword" class="visually-hidden">Mdp</label>
-        <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
+        <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Mdp" required>
         <button class="w-100 btn btn-lg btn-primary" type="submit">Connexion</button>
       </form>
     </main>
