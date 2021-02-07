@@ -20,7 +20,7 @@
     <?php foreach ($livres as $livre): ?>
     <tr>
       <td>
-        <a href="index.php?id=modif-livre&lid= <?php echo $livre['idLivre'] ?>">
+        <a href="index.php?id=modif-livre&lid=<?php echo $livre['idLivre'] ?>">
           <?php echo $livre['idLivre']; ?>
         </a>
       </td>
@@ -44,7 +44,7 @@
         <?php echo $livre['nomEditeur']; ?>
       </td>
       <td>
-        Oui
+        <?php echo $livre['emprunte'] == 1 ? "Oui" : "Non" ?>
       </td>
     </tr>
     <?php endforeach; ?>
