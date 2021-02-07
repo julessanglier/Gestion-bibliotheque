@@ -34,11 +34,11 @@ IMPORTANT :
   -> Laisser le dossier tel quel avec le nom 'gestion_bibliotheque' (utilisé pour des redirections).
 
   -> Installation de la BD :
-    - lancer le script : db_schema.sql (création de la bdd : 'bibliotheque2')
-    - lancer les autres scripts pour insérer quelques données de base
+    - lancez le script : db_schema.sql (création de la bdd : 'bibliotheque2')
+    - lancez le script : scriptInsertion.sql
 
   -> Vous pouvez trouver le MLD utilisé dans le dossier /sql : mcd.png.
-  
+
   -> Pour se connecter à l'interface utilisez les identifiants suivants :
       Mail : admin@bib-orleans.com
       Mdp : admin
@@ -71,18 +71,8 @@ Description des fichiers :
   ├── README.md
   ├── signin.css : fichier de style de la page de connexion
   ├── sql : dossier répertoriant les différents scripts
-  │   ├── adherent.sql
-  │   ├── a_pour_categorie.sql
-  │   ├── auteur.sql
-  │   ├── categorie.sql
   │   ├── db_schema.sql
-  │   ├── ecrit_par.sql
-  │   ├── edite_par.sql
-  │   ├── editeur.sql
-  │   ├── emprunts.sql
-  │   ├── livre.sql
-  │   ├── mcd.png
-  │   └── _user_.sql
+  │   ├── scriptInsertion.sql
   └── templates : templates respectifs
       ├── baseLayout.php : template de base
       ├── liste_livres.php
